@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= config.PageSettings.Name %></title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <meta property="og:title" content="<%= config.PageSettings.Name %>" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="<%= config.PageSettings.baseURL %>" />
+  <meta property="og:image" content="<%= config.PageSettings.baseURL %>/logo.png" />
+  <meta property="og:description" content="<%= config.PageSettings.Description %>" />
+  <meta name="theme-color" content="<%= config.PageSettings.ThemeColor %>">
+
+  <style>
+    :root {
+      --primary: <%=config.PageSettings.ThemeColor %>;
+      --primary-rgb: <%=themeColorRgb %>;
+      --bg: #0a0a0f;
+      --bg-secondary: #0f0f17;
+      --bg-card: #16161f;
+      --bg-hover: #1a1a26;
+      --text: #ffffff;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --border: #2d2d3a;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --accent: #8b5cf6;
+      --glass: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 35px 70px -15px rgba(0, 0, 0, 0.3);
+      --glow: 0 0 20px rgba(var(--primary-rgb), 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(var(--primary-rgb), 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+      min-height: 100vh;
+    }
+
+    .noise::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.02;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23fff' fill-opacity='0.1' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E") repeat;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .hero {
+      padding: 3rem 0 2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(circle at 25% 25%, rgba(var(--primary-rgb), 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+      animation: gradientShift 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gradientShift {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    .status-globe {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 1.5rem;
+      position: relative;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--primary));
+      padding: 3px;
+      animation: rotate 20s linear infinite;
+      filter: drop-shadow(0 10px 30px rgba(var(--primary-rgb), 0.3));
+    }
+
+    .status-globe::after {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent, rgba(var(--primary-rgb), 0.1), transparent);
+      animation: rotate 15s linear infinite reverse;
+      z-index: -1;
+    }
+
+    .status-globe::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .status-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      z-index: 2;
+    }
+
+    .status-online {
+      color: var(--success);
+    }
+
+    .status-partial {
+      color: var(--warning);
+    }
+
+    .status-offline {
+      color: var(--error);
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin: 2.5rem 0;
+    }
+
+    .stat-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      text-align: center;
+      backdrop-filter: blur(20px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .services-section {
+      margin: 3rem 0;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--text), var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .category-grid {
+      display: grid;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .category-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 2rem;
+      backdrop-filter: blur(20px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .category-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    .category-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(var(--primary-rgb), 0.05) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .category-card:hover {
+      transform: translateY(-8px);
+      box-shadow:
+        var(--shadow-lg),
+        0 0 80px rgba(var(--primary-rgb), 0.1);
+      border-color: rgba(var(--primary-rgb), 0.3);
+    }
+
+    .category-card:hover::after {
+      opacity: 1;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .category-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .category-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .service-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: var(--bg-secondary);
+      border-radius: 22px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: -1;
+    }
+
+
+    .service-card:hover::before {
+      width: 100%;
+      opacity: 0.03;
+    }
+
+    .service-card:hover::after {
+      opacity: 1;
+    }
+
+    .service-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .service-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .service-status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 0 10px currentColor;
+      flex-shrink: 0;
+      min-width: 12px;
+      min-height: 12px;
+    }
+
+    .service-status-dot::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .service-status-dot::after {
+      display: none;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+      }
+    }
+
+    .service-status-dot.online {
+      background: var(--success);
+      color: var(--success);
+    }
+
+    .service-status-dot.partial {
+      background: var(--warning);
+      color: var(--warning);
+    }
+
+    .service-status-dot.offline {
+      background: var(--error);
+      color: var(--error);
+    }
+
+    .service-status-dot.maintenance {
+      background: var(--accent);
+      color: var(--accent);
+    }
+
+    .service-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .service-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .service-badge.online {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .service-badge.partial {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .service-badge.offline {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--error);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .service-badge.maintenance {
+      background: rgba(139, 92, 246, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .service-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .status-text {
+      color: var(--text);
+    }
+
+    .status-text.online {
+      color: var(--success);
+    }
+
+    .status-text.partial {
+      color: var(--warning);
+    }
+
+    .status-text.offline {
+      color: var(--error);
+    }
+
+    .status-text.maintenance {
+      color: var(--accent);
+    }
+
+    .metric {
+      text-align: center;
+      padding: 1rem;
+      background: var(--glass);
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      animation: metricGlow 4s infinite;
+    }
+
+    @keyframes metricGlow {
+      to {
+        left: 100%;
+      }
+    }
+
+    .metric-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .uptime-bar {
+      height: 12px;
+      background: var(--bg-hover);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .uptime-bar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+      animation: shimmer 3s infinite;
+    }
+
+    .uptime-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 6px;
+      transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.3);
+    }
+
+    .uptime-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      animation: fillShimmer 2.5s infinite;
+    }
+
+    @keyframes shimmer {
+      to {
+        left: 100%;
+      }
+    }
+
+    @keyframes fillShimmer {
+      to {
+        left: 100%;
+      }
+    }
+
+    .history-timeline {
+      height: 80px;
+      background: var(--bg-hover);
+      border-radius: 16px;
+      padding: 16px;
+      position: relative;
+      overflow: visible;
+      border: 1px solid var(--glass-border);
+    }
+
+    .neural-grid {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(15, 1fr);
+      gap: 4px;
+      align-items: center;
+    }
+
+    .neural-node {
+      width: 100%;
+      height: 24px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: visible;
+    }
+
+    .neural-node::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+      border-radius: 8px;
+    }
+
+    .neural-node:hover::before {
+      transform: translateX(100%);
+    }
+
+    .neural-node.online {
+      background: linear-gradient(135deg, var(--success), #22c55e);
+      border-color: var(--success);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .neural-node.partial {
+      background: linear-gradient(135deg, var(--warning), #fbbf24);
+      border-color: var(--warning);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+    }
+
+    .neural-node.offline {
+      background: linear-gradient(135deg, var(--error), #f87171);
+      border-color: var(--error);
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+    }
+
+    .neural-node.maintenance {
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+    }
+
+    .neural-node.placeholder {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .neural-node:hover {
+      transform: translateY(-4px) scale(1.1);
+      z-index: 1000;
+    }
+
+    .neural-node.online:hover {
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+    }
+
+    .neural-node.partial:hover {
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.6);
+    }
+
+    .neural-node.offline:hover {
+      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.6);
+    }
+
+    .neural-node.maintenance:hover {
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.6);
+    }
+
+    .neural-connections {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .connection-line {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(var(--primary-rgb), 0.3), transparent);
+      animation: dataFlow 3s ease-in-out infinite;
+      opacity: 0;
+    }
+
+    .neural-grid:hover .connection-line {
+      opacity: 1;
+    }
+
+    @keyframes dataFlow {
+
+      0%,
+      100% {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scaleX(1);
+      }
+    }
+
+    .announcement-banner {
+      position: relative;
+      background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.1), rgba(var(--accent), 0.05));
+      border: 1px solid rgba(var(--primary-rgb), 0.2);
+      border-radius: 16px;
+      padding: 1rem 1.5rem;
+      margin: 2rem auto;
+      max-width: 1400px;
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      animation: slideDown 0.5s ease-out;
+      overflow: hidden;
+    }
+
+    .announcement-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    .announcement-banner.info {
+      background: linear-gradient(135deg, rgba(94, 153, 255, 0.1), rgba(139, 92, 246, 0.05));
+      border-color: rgba(94, 153, 255, 0.2);
+    }
+
+    .announcement-banner.warning {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.05));
+      border-color: rgba(245, 158, 11, 0.2);
+    }
+
+    .announcement-banner.warning::before {
+      background: linear-gradient(90deg, var(--warning), #fbbf24);
+    }
+
+    .announcement-banner.success {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(34, 197, 94, 0.05));
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .announcement-banner.success::before {
+      background: linear-gradient(90deg, var(--success), #22c55e);
+    }
+
+    .announcement-banner.error {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(248, 113, 113, 0.05));
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    .announcement-banner.error::before {
+      background: linear-gradient(90deg, var(--error), #f87171);
+    }
+
+    .announcement-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .announcement-banner.warning .announcement-icon {
+      background: linear-gradient(135deg, var(--warning), #fbbf24);
+    }
+
+    .announcement-banner.success .announcement-icon {
+      background: linear-gradient(135deg, var(--success), #22c55e);
+    }
+
+    .announcement-banner.error .announcement-icon {
+      background: linear-gradient(135deg, var(--error), #f87171);
+    }
+
+    .announcement-content {
+      flex: 1;
+      color: var(--text);
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .announcement-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .announcement-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .announcement-banner.dismissed {
+      animation: slideUp 0.3s ease-out forwards;
+    }
+
+    @keyframes slideUp {
+      to {
+        opacity: 0;
+        transform: translateY(-20px);
+        margin: 0;
+        padding: 0;
+        height: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .announcement-banner {
+        margin: 1rem;
+        padding: 1rem;
+      }
+
+      .announcement-content {
+        font-size: 0.9rem;
+      }
+    }
+
+    .status-tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) scale(0.8);
+      background: var(--bg-card);
+      color: var(--text);
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      backdrop-filter: blur(20px);
+      min-width: 160px;
+      pointer-events: none;
+    }
+
+    .status-tooltip::before {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--bg-card);
+    }
+
+    .neural-node:hover .status-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) scale(1);
+    }
+
+    .tooltip-header {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.4rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .tooltip-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .tooltip-status-dot.online {
+      background: var(--success);
+    }
+
+    .tooltip-status-dot.partial {
+      background: var(--warning);
+    }
+
+    .tooltip-status-dot.offline {
+      background: var(--error);
+    }
+
+    .tooltip-status-dot.maintenance {
+      background: var(--accent);
+    }
+
+    .tooltip-status-dot.placeholder {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .tooltip-date {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 0.8rem;
+    }
+
+    .tooltip-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .tooltip-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .tooltip-label {
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+    }
+
+    .tooltip-value {
+      color: var(--text);
+      font-weight: 500;
+      font-size: 0.7rem;
+    }
+
+    .history-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg,
+          transparent 0%,
+          rgba(var(--primary-rgb), 0.05) 25%,
+          rgba(var(--accent), 0.05) 75%,
+          transparent 100%);
+      animation: gradientSweep 8s ease-in-out infinite;
+      border-radius: 16px;
+      pointer-events: none;
+    }
+
+    @keyframes gradientSweep {
+
+      0%,
+      100% {
+        opacity: 0.2;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .neural-grid:hover .history-gradient {
+      animation-duration: 3s;
+    }
+
+    .neural-node:first-child .status-tooltip,
+    .neural-node:nth-child(-n+2) .status-tooltip {
+      left: 0;
+      transform: translateX(0) translateY(10px) scale(0.8);
+    }
+
+    .neural-node:first-child:hover .status-tooltip,
+    .neural-node:nth-child(-n+2):hover .status-tooltip {
+      transform: translateX(0) translateY(-5px) scale(1);
+    }
+
+    .neural-node:first-child .status-tooltip::before,
+    .neural-node:nth-child(-n+2) .status-tooltip::before {
+      left: 15px;
+      transform: translateX(0);
+    }
+
+    .neural-node:last-child .status-tooltip,
+    .neural-node:nth-last-child(-n+2) .status-tooltip {
+      left: auto;
+      right: 0;
+      transform: translateX(0) translateY(10px) scale(0.8);
+    }
+
+    .neural-node:last-child:hover .status-tooltip,
+    .neural-node:nth-last-child(-n+2):hover .status-tooltip {
+      transform: translateX(0) translateY(-5px) scale(1);
+    }
+
+    .neural-node:last-child .status-tooltip::before,
+    .neural-node:nth-last-child(-n+2) .status-tooltip::before {
+      left: auto;
+      right: 15px;
+      transform: translateX(0);
+    }
+
+    .floating-refresh {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 1000;
+    }
+
+    .status-logo {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 1.5rem;
+      position: relative;
+      border-radius: 20px;
+      filter: drop-shadow(0 10px 30px rgba(var(--primary-rgb), 0.3));
+    }
+
+    .logo-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .status-overlay {
+      display: none;
+    }
+
+    .status-logo:hover .logo-image {
+      transform: scale(1.05);
+    }
+
+    .refresh-btn {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow:
+        var(--glow),
+        var(--shadow),
+        0 0 0 0 rgba(var(--primary-rgb), 0.7);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .refresh-btn::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--primary));
+      border-radius: 50%;
+      z-index: -1;
+      animation: rotate 3s linear infinite;
+    }
+
+    .refresh-btn:hover {
+      transform: translateY(-8px) scale(1.1);
+      animation: refreshPulse 0.6s ease-in-out;
+      box-shadow:
+        var(--glow),
+        var(--shadow-lg),
+        0 0 0 20px rgba(var(--primary-rgb), 0);
+    }
+
+    @keyframes refreshPulse {
+      0% {
+        box-shadow: var(--glow), var(--shadow-lg), 0 0 0 0 rgba(var(--primary-rgb), 0.7);
+      }
+
+      70% {
+        box-shadow: var(--glow), var(--shadow-lg), 0 0 0 20px rgba(var(--primary-rgb), 0);
+      }
+
+      100% {
+        box-shadow: var(--glow), var(--shadow-lg), 0 0 0 0 rgba(var(--primary-rgb), 0);
+      }
+    }
+
+    .refresh-btn.spinning {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .toast {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      max-width: 400px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow-lg);
+      transform: translateX(500px);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1001;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .toast-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.8rem;
+    }
+
+    .toast-title {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .toast-message {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+
+    .fade-enter-from,
+    .fade-leave-to {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1rem;
+      }
+
+      .hero-title {
+        font-size: 2rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+      }
+
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-title {
+        font-size: 2rem;
+      }
+
+      .service-name {
+        font-size: 1rem;
+      }
+
+      .section-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body class="noise" x-data="statusPage()" x-init="init()">
+  <template x-if="announcement.show && announcement.enabled">
+    <div :class="`announcement-banner ${announcement.type}`" x-show="announcement.show" x-transition.opacity.duration.500ms>
+      <div class="announcement-icon">
+        <i :class="getAnnouncementIcon()"></i>
+      </div>
+      <div class="announcement-content" x-text="announcement.message"></div>
+      <template x-if="announcement.dismissible">
+        <button class="announcement-close" @click="dismissAnnouncement()" title="Dismiss">
+          <i class="fas fa-times"></i>
+        </button>
+      </template>
+    </div>
+  </template>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="status-logo">
+          <img src="/logo.png" alt="Status Logo" class="logo-image">
+          <div :class="`status-overlay status-${overallStatusClass}`"></div>
+        </div>
+        <h1 class="hero-title" x-html="getColoredStatusText()"></h1>
+        <p class="hero-subtitle">
+          Last updated
+          <span x-text="getRelativeTime(lastUpdated)"></span>
+        </p>
+
+        <div class="stats-grid">
+          <template x-for="stat in stats" :key="stat.label">
+            <div class="stat-card" x-transition.opacity.duration.600ms>
+              <div class="stat-value" x-text="stat.value"></div>
+              <div class="stat-label" x-text="stat.label"></div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <section class="services-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Service Status</h2>
+        </div>
+
+        <div class="category-grid">
+          <template x-for="[categoryName, categoryServices] in Object.entries(servicesByCategory)" :key="categoryName">
+            <div class="category-card" @mousemove="updateMousePosition($event)" x-transition.opacity.duration.800ms>
+              <div class="category-header">
+                <div class="category-title">
+                  <div class="category-icon">
+                    <i class="fas fa-layer-group"></i>
+                  </div>
+                  <span x-text="categoryName"></span>
+                </div>
+              </div>
+
+              <div class="services-grid">
+                <template x-for="service in categoryServices" :key="service.name">
+                  <div class="service-card" x-transition.opacity.duration.600ms>
+                    <div class="service-header">
+                      <div class="service-info">
+                        <div :class="`service-status-dot ${service.status}`"></div>
+                        <div class="service-name" x-text="service.name"></div>
+                      </div>
+                      <div :class="`service-badge ${service.status}`" x-text="service.status === 'maintenance' ? 'Maintenance' : service.status.charAt(0).toUpperCase() + service.status.slice(1)">
+                      </div>
+                    </div>
+
+                    <div class="service-metrics">
+                      <div class="metric">
+                        <div class="metric-value" x-text="`${service.uptimePercentage}%`"></div>
+                        <div class="metric-label">Uptime</div>
+                      </div>
+                      <div class="metric">
+                        <div class="metric-value" x-text="service.status === 'offline' || service.status === 'maintenance' ? '—' : (service.responseTime ? `${service.responseTime}ms` : '—')"></div>
+                        <div class="metric-label">Response</div>
+                      </div>
+                    </div>
+
+                    <div class="uptime-bar">
+                      <div class="uptime-fill" :style="`width: ${service.uptimePercentage}%`"></div>
+                    </div>
+
+                    <div class="history-timeline">
+                      <div class="history-gradient"></div>
+                      <div class="neural-connections">
+                        <template x-for="(_, index) in Array.from({length: 14})" :key="index">
+                          <div class="connection-line" :style="`top: 50%; left: ${(index + 1) * (100/15)}%; width: ${100/15}%; animation-delay: ${index * 0.2}s;`">
+                          </div>
+                        </template>
+                      </div>
+
+                      <div class="neural-grid">
+                        <template x-for="(day, index) in service.history.slice(-15)" :key="index">
+                          <div :class="`neural-node ${day.status}`" :data-date="day.date">
+                            <div class="status-tooltip">
+                              <div class="tooltip-header">
+                                <div :class="`tooltip-status-dot ${day.status}`"></div>
+                                <div class="tooltip-date" x-text="day.date !== 'N/A' ? formatDate(day.date) : 'No Data'">
+                                </div>
+                              </div>
+                              <div class="tooltip-info">
+                                <div class="tooltip-row">
+                                  <span class="tooltip-label">Status</span>
+                                  <span class="tooltip-value" x-text="day.status === 'placeholder' ? 'Unknown' : day.status.charAt(0).toUpperCase() + day.status.slice(1)">
+                                  </span>
+                                </div>
+                                <template x-if="day.date !== 'N/A'">
+                                  <div>
+                                    <div class="tooltip-row">
+                                      <span class="tooltip-label">Uptime</span>
+                                      <span class="tooltip-value" x-text="`${day.uptimePercentage || '100'}%`"></span>
+                                    </div>
+                                    <template x-if="day.durations && day.durations.length > 0">
+                                      <div class="tooltip-row">
+                                        <span class="tooltip-label">Downtime</span>
+                                        <span class="tooltip-value" x-text="formatDowntime(day.durations)"></span>
+                                      </div>
+                                    </template>
+                                    <template x-if="(day.status === 'online' || day.status === 'partial') && day.avgResponseTime">
+                                      <div class="tooltip-row">
+                                        <span class="tooltip-label">Response</span>
+                                        <span class="tooltip-value" x-text="`${day.avgResponseTime}ms`"></span>
+                                      </div>
+                                    </template>
+                                  </div>
+                                </template>
+                              </div>
+                            </div>
+                          </div>
+                        </template>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="floating-refresh">
+    <button class="refresh-btn" :class="{ 'spinning': isRefreshing }" :disabled="isRefreshing" @click="refreshStatus()" title="Refresh Status">
+      <i class="fas fa-sync-alt"></i>
+    </button>
+  </div>
+
+  <div class="toast" :class="{ 'show': toast.show }" x-show="toast.show" x-transition.opacity>
+    <div class="toast-header">
+      <div class="toast-icon">
+        <i class="fas fa-info"></i>
+      </div>
+      <div class="toast-title" x-text="toast.title"></div>
+    </div>
+    <div class="toast-message" x-text="toast.message"></div>
+  </div>
+
+  <script>
+    window.statusPageData = {
+      services: <%- JSON.stringify(services) %>,
+      lastUpdated: '<%= lastUpdated %>',
+      overallStatusText: '<%= overallStatus %>',
+      overallStatusClass: '<%= statusClass %>',
+      config: {
+        name: '<%= config.PageSettings.Name %>',
+        logo: '<%= config.PageSettings.PageSettings %>/logo.png',
+        announcement: <%- JSON.stringify(config.Announcement || null) %>
+      }
+    };
+
+    function statusPage() {
+      return {
+        services: window.statusPageData.services,
+        lastUpdated: window.statusPageData.lastUpdated,
+        overallStatusText: window.statusPageData.overallStatusText,
+        overallStatusClass: window.statusPageData.overallStatusClass,
+
+        isRefreshing: false,
+        showTooltip: null,
+        toast: {
+          show: false,
+          title: '',
+          message: ''
+        },
+        announcement: {
+          show: true,
+          enabled: false,
+          message: '',
+          type: 'info',
+          dismissible: true
+        },
+
+        get servicesByCategory() {
+          return this.services.reduce((categories, service) => {
+            const category = service.category || 'Uncategorized';
+            if (!categories[category]) {
+              categories[category] = [];
+            }
+            categories[category].push(service);
+            return categories;
+          }, {});
+        },
+
+        get stats() {
+          const onlineServices = this.services.filter(s => s.status === 'online').length;
+          const totalUptime = this.services.reduce((sum, s) => sum + parseFloat(s.uptimePercentage || 0), 0);
+          const avgUptime = this.services.length ? (totalUptime / this.services.length).toFixed(1) : 0;
+
+          const responseTimes = this.services.filter(s => s.responseTime > 0 && s.status === 'online');
+          const avgResponse = responseTimes.length ?
+          Math.round(responseTimes.reduce((sum, s) => sum + s.responseTime, 0) / responseTimes.length) : 0;
+
+          return [{
+              value: onlineServices,
+              label: 'Services Online'
+            },
+            {
+              value: `${avgUptime}%`,
+              label: 'Overall Uptime'
+            },
+            {
+              value: `${avgResponse}ms`,
+              label: 'Avg Response'
+            },
+            {
+              value: this.services.length,
+              label: 'Total Services'
+            }
+          ];
+        },
+
+        init() {
+          this.initAnnouncement();
+          this.startRelativeTimeUpdater();
+          this.animateCards();
+        },
+
+        initAnnouncement() {
+          const config = window.statusPageData.config;
+          if (config.announcement) {
+            this.announcement.enabled = config.announcement.Enabled;
+            this.announcement.message = config.announcement.Message;
+            this.announcement.type = config.announcement.Type || 'info';
+            this.announcement.dismissible = config.announcement.Dismissible !== false;
+
+            if (this.announcement.dismissible) {
+              const dismissedKey = `announcement-dismissed-${this.hashString(this.announcement.message)}`;
+              this.announcement.show = !localStorage.getItem(dismissedKey);
+            }
+          }
+        },
+
+        hashString(str) {
+          let hash = 0;
+          if (str.length === 0) return hash;
+          for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+          }
+          return Math.abs(hash).toString();
+        },
+
+        dismissAnnouncement() {
+          const dismissedKey = `announcement-dismissed-${this.hashString(this.announcement.message)}`;
+          localStorage.setItem(dismissedKey, 'true');
+          this.announcement.show = false;
+        },
+
+        getAnnouncementIcon() {
+          const icons = {
+            info: 'fas fa-info',
+            warning: 'fas fa-exclamation-triangle',
+            success: 'fas fa-check',
+            error: 'fas fa-times'
+          };
+          return icons[this.announcement.type] || icons.info;
+        },
+
+        async refreshStatus() {
+          if (this.isRefreshing) return;
+
+          try {
+            this.isRefreshing = true;
+            const response = await fetch('/refresh');
+            const data = await response.json();
+
+            if (data.lastUpdated) {
+              this.lastUpdated = data.lastUpdated;
+              this.showToast('Status Updated', 'Service statuses have been refreshed successfully.');
+
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            }
+          } catch (error) {
+            console.error('Error refreshing status:', error);
+            this.showToast('Refresh Failed', 'There was an error refreshing the status. Please try again.');
+          } finally {
+            this.isRefreshing = false;
+          }
+        },
+
+        showToast(title, message) {
+          this.toast.title = title;
+          this.toast.message = message;
+          this.toast.show = true;
+
+          setTimeout(() => {
+            this.toast.show = false;
+          }, 5000);
+        },
+
+        getColoredStatusText() {
+          const text = this.overallStatusText;
+
+          const statusKeywords = {
+            'online': ['online', 'operational'],
+            'offline': ['offline', 'down'],
+            'partial': ['partial', 'degraded'],
+            'maintenance': ['maintenance', 'scheduled']
+          };
+
+          let coloredText = text;
+
+          Object.keys(statusKeywords).forEach(status => {
+            statusKeywords[status].forEach(keyword => {
+              const regex = new RegExp(`\\b(${keyword})\\b`, 'gi');
+              coloredText = coloredText.replace(regex, `<span class="status-text ${status}">$1</span>`);
+            });
+          });
+
+          return coloredText;
+        },
+
+        getRelativeTime(timestamp) {
+          const now = new Date().getTime();
+          const date = new Date(timestamp).getTime();
+          const diff = now - date;
+
+          const minute = 60 * 1000;
+          const hour = 60 * minute;
+          const day = 24 * hour;
+
+          if (diff < minute) {
+            return "just now";
+          } else if (diff < hour) {
+            const minutes = Math.floor(diff / minute);
+            return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+          } else if (diff < day) {
+            const hours = Math.floor(diff / hour);
+            return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+          } else {
+            const days = Math.floor(diff / day);
+            return `${days} day${days > 1 ? 's' : ''} ago`;
+          }
+        },
+
+        formatDowntime(durations) {
+          if (!durations || durations.length === 0) return 'None';
+
+          const totalSeconds = durations.reduce((sum, duration) => sum + duration, 0);
+
+          if (totalSeconds < 60) {
+            return `${Math.round(totalSeconds)}s`;
+          } else if (totalSeconds < 3600) {
+            const minutes = Math.round(totalSeconds / 60);
+            return `${minutes}m`;
+          } else {
+            const hours = Math.round(totalSeconds / 3600);
+            return `${hours}h`;
+          }
+        },
+
+        formatDate(dateStr) {
+          if (dateStr === 'N/A') return 'No Data';
+          const date = new Date(dateStr);
+          return date.toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric'
+          });
+        },
+
+        getStatusIcon() {
+          const iconMap = {
+            'online': 'check-circle',
+            'partial': 'exclamation-circle',
+            'offline': 'times-circle'
+          };
+          return iconMap[this.overallStatusClass] || 'check-circle';
+        },
+
+        generateWaveSVG(history) {
+          if (!history || history.length === 0) {
+            return '<svg viewBox="0 0 300 40" preserveAspectRatio="none"><path d="M 0 20 L 300 20" class="wave-path online" /></svg>';
+          }
+
+          const recentDays = history.slice(-30);
+          let pathData = 'M 0 20';
+
+          recentDays.forEach((day, index) => {
+            const x = (index + 1) * (300 / Math.max(30, recentDays.length));
+            let y = 20;
+
+            if (day.status === 'online') y = 10;
+            else if (day.status === 'partial') y = 15;
+            else if (day.status === 'offline') y = 30;
+            else if (day.status === 'maintenance') y = 25;
+            else y = 20;
+
+            const prevX = index * (300 / Math.max(30, recentDays.length));
+            const midX = (prevX + x) / 2;
+            pathData += ` Q ${midX} ${y} ${x} ${y}`;
+          });
+
+          const statusCounts = {
+            online: 0,
+            partial: 0,
+            offline: 0,
+            maintenance: 0,
+            placeholder: 0
+          };
+          recentDays.forEach(day => {
+            if (statusCounts[day.status] !== undefined) {
+              statusCounts[day.status]++;
+            } else {
+              statusCounts.placeholder++;
+            }
+          });
+
+          const dominantStatus = Object.keys(statusCounts).reduce((a, b) =>
+            statusCounts[a] > statusCounts[b] ? a : b
+          );
+
+          return `
+            <svg viewBox="0 0 300 40" preserveAspectRatio="none">
+              <path d="${pathData}" class="wave-path ${dominantStatus === 'placeholder' ? 'online' : dominantStatus}" />
+            </svg>
+          `;
+        },
+
+        updateMousePosition(event) {
+          const rect = event.currentTarget.getBoundingClientRect();
+          const x = ((event.clientX - rect.left) / rect.width) * 100;
+          const y = ((event.clientY - rect.top) / rect.height) * 100;
+          event.currentTarget.style.setProperty('--mouse-x', x + '%');
+          event.currentTarget.style.setProperty('--mouse-y', y + '%');
+        },
+
+        startRelativeTimeUpdater() {
+          setInterval(() => {
+            this.$nextTick();
+          }, 60000);
+        },
+
+        animateCards() {
+          this.$nextTick(() => {
+            const observer = new IntersectionObserver((entries) => {
+              entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                  setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                  }, index * 100);
+                }
+              });
+            });
+
+            document.querySelectorAll('.stat-card, .service-card').forEach(card => {
+              card.style.opacity = '0';
+              card.style.transform = 'translateY(20px)';
+              card.style.transition = 'all 0.6s ease-out';
+              observer.observe(card);
+            });
+          });
+        }
+      };
+    }
+  </script>
+</body>
+
+</html>

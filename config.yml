@@ -1,0 +1,245 @@
+# ===========================================================================
+# Plex Status Configuration
+# If you find any issues, need support, or have a suggestion for the product, let us know in our Discord server.
+# Discord: https://discord.gg/plexdev
+# Documentation: https://docs.plexdevelopment.net/9274
+# ===========================================================================
+MongoURI: "CONNECTION_URL"
+DebugMode: false
+
+# ===========================================================================
+# STATUS PAGE
+# ===========================================================================
+PageSettings:
+  Name: "Plex Status"
+  baseURL: "http://localhost:3000" # The exact URL you use to access the website, No trailing slashes
+  ThemeColor: "#5e99ff"
+  Description: "Plex Status provides real-time updates on the status of Plex services, including uptime, maintenance, and historical data. Stay informed about the operational status of our services." 
+  Port: 3000
+  trustProxy: 0 # Set to 0 to disable, or use a number equal to how many reverse proxies your app sits behind (e.g., 1 for Nginx, 2 for Nginx + Cloudflare, etc.)
+  updateInterval: 1m
+
+# ===========================================================================
+# DISCORD BOT (OPTIONAL)
+# This section is completely optional. If you don't want to use the Discord bot,
+# just set Enabled to false
+# ===========================================================================
+DiscordBot:
+  Enabled: false # Set to true to enable Discord bot integration
+  Token: "BOT_TOKEN" # Your Discord bot token
+  GuildID: "GUILD_ID" # Server/Guild ID where the bot will post updates
+  ChannelID: "CHANNEL_ID" # Channel ID where status updates will be posted
+  UpdateInterval: 1m # How often to update the Discord embed (default: same as PageSettings.updateInterval)
+
+# ===========================================================================
+# ANNOUNCEMENT BANNER (OPTIONAL)
+# ===========================================================================
+Announcement:
+  Enabled: false
+  Message: "🚀 We're upgrading our infrastructure this weekend. Expect improved performance!"
+  Type: "info"  # Options: info, warning, success, error
+  Dismissible: true  # Allow users to close the announcement
+
+# ===========================================================================
+# SERVICES CONFIGURATION
+# ===========================================================================
+
+# HOW TO CONFIGURE SERVICES:
+# Each service requires the following properties:
+# - name: A descriptive name for your service
+# - url: The website URL, IP address, or hostname to check
+# - type: The type of check to perform (see types below)
+# - category: Group name for organizing services on the status page
+# - maintenance: Set to true if service is under planned maintenance
+# - webhookURL: Optional Discord webhook for status change notifications
+# - port: Required only for TCP and UDP checks
+#
+# AVAILABLE SERVICE TYPES:
+# - website: Checks if a website URL is accessible (https://google.com)
+# - ip: Checks if an IP address responds to ping (8.8.8.8)
+# - minecraft: Checks if a Minecraft server is online (mc.example.com)
+# - tcp: Checks if a specific TCP port is open (requires port number)
+# - udp: Checks if a specific UDP port is open (requires port number)
+#
+# EXAMPLE TCP SERVICE:
+# - name: "FTP Server"
+#   url: "ftp.example.com"  # Hostname or IP address
+#   port: 21               # Required - the TCP port to check
+#   type: "tcp"
+#   category: "File Services"
+#
+# EXAMPLE UDP SERVICE:
+# - name: "Voice Chat"
+#   url: "voice.example.com"  # Hostname or IP address
+#   port: 5060               # Required - the UDP port to check
+#   type: "udp"
+#   category: "Communication"
+
+services:
+  - name: "Main Website"
+    url: "https://google.com"
+    webhookURL: ""
+    maintenance: false
+    type: "website"
+    category: "Web Services"
+
+  - name: "Documentation Portal"
+    url: "https://cloudflare.com"
+    webhookURL: ""
+    maintenance: false
+    type: "website"
+    category: "Web Services"
+
+  - name: "Customer Dashboard"
+    url: "https://github.com"
+    webhookURL: ""
+    maintenance: false
+    type: "website"
+    category: "Web Services"
+
+  - name: "Authentication API"
+    url: "8.8.8.8"
+    webhookURL: ""
+    maintenance: false
+    type: "ip"
+    category: "API Services"
+
+  - name: "Payment Gateway"
+    url: "1.1.1.1"
+    webhookURL: ""
+    maintenance: false
+    type: "ip"
+    category: "API Services"
+
+  - name: "Analytics API"
+    url: "9.9.9.9"
+    webhookURL: ""
+    maintenance: false
+    type: "ip"
+    category: "API Services"
+    
+
+
+StatusColors:
+  Online: "#4CAF50"
+  Offline: "#F44336"
+  PartialOffline: "#E67E22"
+  Maintenance: "#E67E22"
+
+WebhookMessages:
+  Online:
+    Title: "Status Update"
+    Description: "- Service: ``{{serviceName}}``\n- Status: ``Online``\n\n**Downtime Details:**\n- Went offline: <t:{{lastOfflineTimestamp}}:F>\n- Back online: <t:{{currentTimestamp}}:F>\n- Downtime duration: ``{{formattedDuration}}``" # 9243
+  Offline:
+    Title: "Status Update"
+    Description: "- Service: ``{{serviceName}}``\n- Status: ``Offline``\n\n**Details:**\n- Went offline: <t:{{currentTimestamp}}:F>"
+
+# ===========================================================================
+# DISCORD EMBED CUSTOMIZATION
+# ===========================================================================
+# ===========================================================================
+# DISCORD EMBED CUSTOMIZATION
+# ===========================================================================
+DiscordEmbed:
+  # Basic Settings
+  Title: "{{siteName}} - System Status"
+  Description: |
+    > **{{overallStatus}}**
+    > Last updated: <t:{{timestamp}}:R>
+    
+    {{servicesText}}
+
+  Colors:
+    online: "#10b981"
+    offline: "#ef4444" 
+    partial: "#f59e0b"
+    maintenance: "#8b5cf6"
+  
+  Emojis:
+    online: "🟢"
+    offline: "🔴"
+    partial: "🟠"
+    maintenance: "🔧"
+  
+  # Service display format
+  ServiceFormat: "> {{emoji}} **{{name}}** - {{status}} `({{uptime}}%)`"
+  
+  # Category display format  
+  CategoryFormat: |
+    ## {{categoryName}}
+    {{services}}
+  
+  # Additional info fields (optional)
+  Fields:
+    - Name: "📊 Overview"
+      Value: "> **{{onlineCount}}/{{totalCount}}** services online\n> **{{avgUptime}}%** average uptime"
+      Inline: true
+    - Name: "⚡ Performance" 
+      Value: "> **{{avgResponseTime}}ms** avg response\n> Updated <t:{{timestamp}}:R>"
+      Inline: true
+  
+  # Show/Hide options
+  ShowUptime: true
+  ShowResponseTime: false
+  ShowThumbnail: true
+  ShowFooter: true
+  ShowFields: true
+  
+  # Footer text
+  FooterText: "{{siteName}} • Updated every {{updateInterval}}"
+
+# =============================================================================
+# PERFORMANCE & RELIABILITY SETTINGS
+# =============================================================================
+# These settings control how your status page checks services and handles errors.
+# Adjust these if you're experiencing false alarms or performance issues.
+
+Performance:
+  # How many services to check at the same time
+  # Higher = faster updates but uses more resources
+  # Lower = slower updates but lighter on your server
+  # Recommended: 5-15 depending on your server specs
+  ConcurrencyLimit: 10
+  
+  # How many times a service must show the same status before we believe it
+  # This prevents false alarms when a service briefly goes down
+  # Example: If set to 2, a service must be "offline" twice in a row before showing as offline
+  # Higher = fewer false alarms but slower to detect real outages
+  # Lower = faster detection but more false alarms
+  # Recommended: 2-3
+  DebounceCount: 2
+  
+  # How long (in milliseconds) to wait before resetting the status check counter
+  # 30000 = 30 seconds, 60000 = 1 minute
+  # If a service flip-flops between online/offline, this prevents constant notifications
+  # Recommended: 30000-60000 (30 seconds to 1 minute)
+  DebounceWindow: 30000
+  
+  # Maximum time to wait before checking a service that's been offline
+  # 300000 = 5 minutes, 600000 = 10 minutes
+  # Services that are consistently offline will be checked less frequently to save resources
+  # This prevents spam-checking a service that's clearly down
+  # Recommended: 300000-600000 (5-10 minutes)
+  MaxBackoffInterval: 300000
+
+# =============================================================================
+# WHAT DO THESE SETTINGS DO?
+# =============================================================================
+# 
+# ConcurrencyLimit: Think of this like how many phone calls you can make at once.
+# If you have 50 services and set this to 10, you'll check 10 services at a time
+# instead of all 50 at once (which could crash your server).
+#
+# DebounceCount: This prevents "crying wolf" situations. If your internet hiccups
+# for 1 second, we don't want to immediately show all services as offline.
+# This setting says "only mark as offline if it fails X times in a row."
+#
+# DebounceWindow: This is like a "cool down" period. If a service keeps going
+# online and offline rapidly, we wait this long before resetting our counter.
+# This prevents notification spam.
+#
+# MaxBackoffInterval: If a service has been down for hours, there's no point
+# checking it every minute. This gradually increases the time between checks
+# for services that are clearly offline, saving your server resources.
+#
+# =============================================================================
